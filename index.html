@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Speak &amp; Grain</title>
+  <meta name="description" content="Speak & Grain by DMTØR: hold to speak, then play your voice as clouds of grains.">
+  <meta name="theme-color" content="#0E0F14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Speak &amp; Grain">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- First launch: the password. -->
+  <section id="unlock" class="screen" hidden>
+    <img src="logo.svg" alt="" class="hero-logo">
+    <h1 class="title big">Speak &amp; Grain</h1>
+    <div class="by">by DMTØR</div>
+    <form id="unlockForm" class="unlock-form" autocomplete="off">
+      <input id="password" type="password" placeholder="Password" autocapitalize="none" autocorrect="off" spellcheck="false">
+      <p id="unlockHint" class="hint">Enter the password you were given.</p>
+      <button class="primary wide" type="submit">Unlock</button>
+    </form>
+  </section>
+
+  <!-- Every visit: browsers only start audio and the mic after a tap. -->
+  <section id="start" class="screen" hidden>
+    <img src="logo.svg" alt="" class="hero-logo">
+    <h1 class="title big">Speak &amp; Grain</h1>
+    <div class="by">by DMTØR</div>
+    <button id="startButton" class="primary wide">Tap to start</button>
+    <p id="startHint" class="hint">Uses your microphone. Nothing leaves your phone.</p>
+  </section>
+
+  <main id="app" hidden>
+    <header>
+      <img src="logo.svg" alt="Speak &amp; Grain" class="logo">
+      <div class="heading">
+        <div class="title-row"><h1 class="title">Speak &amp; Grain</h1><span class="by">by DMTØR</span></div>
+        <p id="status" class="status"></p>
+      </div>
+    </header>
+
+    <section class="pad">
+      <canvas id="padCanvas"></canvas>
+      <div class="chips">
+        <button id="yAxisChip" class="chip"></button>
+        <button id="snapChip" class="chip"></button>
+        <button id="wholeChip" class="chip" hidden>
+          <svg viewBox="0 0 14 10" class="icon-sm"><path d="M1 5h12M1 5l3-3M1 5l3 3M13 5l-3-3M13 5l-3 3"/></svg>Whole take
+        </button>
+      </div>
+      <div id="menu" class="menu" hidden></div>
+      <div id="yTop" class="ylabel top"></div>
+      <div id="yBottom" class="ylabel bottom"></div>
+      <div id="padHint" class="pad-hint">Your recording will appear here</div>
+    </section>
+
+    <section id="range" class="range">
+      <div class="range-track"><div class="range-fill"></div><div class="thumb" data-end="start"></div><div class="thumb" data-end="end"></div></div>
+      <div class="range-labels"><span id="rangeStart"></span><span class="muted">drag to choose what plays</span><span id="rangeEnd"></span></div>
+    </section>
+
+    <div id="direction" class="segmented">
+      <button data-direction="Forward"><svg viewBox="0 0 16 12" class="icon"><path d="M1 6h14M15 6l-4-3.2M15 6l-4 3.2"/></svg>Forward</button>
+      <button data-direction="Mixed"><svg viewBox="0 0 16 12" class="icon"><path d="M1 2.4h14M15 2.4l-4-3.2M15 2.4l-4 3.2M15 9.6H1M1 9.6l4-3.2M1 9.6l4 3.2"/></svg>Mixed</button>
+      <button data-direction="Backward"><svg viewBox="0 0 16 12" class="icon"><path d="M15 6H1M1 6l4-3.2M1 6l4 3.2"/></svg>Backward</button>
+    </div>
+
+    <div id="sliders" class="sliders"></div>
+
+    <div class="bottom">
+      <button id="auto" class="tonal" disabled><svg viewBox="0 0 12 12" class="icon-fill" id="autoIcon"></svg>Auto</button>
+      <button id="speak" class="speak" disabled>Hold to<br>Speak</button>
+      <div class="rec-row">
+        <button id="rec" class="outlined" disabled><svg viewBox="0 0 10 10" class="icon-fill" id="recIcon"></svg><span id="recLabel">Rec</span></button>
+        <button id="share" class="icon-button" disabled aria-label="Share">
+          <svg viewBox="0 0 20 20"><path d="M16 3.5L4 10l12 6.5"/><circle cx="16" cy="3.5" r="2.6"/><circle cx="4" cy="10" r="2.6"/><circle cx="16" cy="16.5" r="2.6"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Share & export. -->
+  <div id="sheetBackdrop" class="backdrop" hidden></div>
+  <section id="sheet" class="sheet" hidden>
+    <div class="handle"></div>
+    <h2>Share &amp; export</h2>
+    <div id="sourceSeg" class="segmented">
+      <button data-source="performance">Performance</button>
+      <button data-source="voice">Voice clip</button>
+    </div>
+    <div class="sheet-row">
+      <span id="sheetInfo" class="info"></span>
+      <button id="stopNow" class="text" hidden>Stop now</button>
+      <button id="preview" class="outlined" hidden>▶ Preview</button>
+    </div>
+    <div id="tailBar" class="progress indeterminate" hidden><div></div></div>
+    <div id="formatSeg" class="segmented">
+      <button data-format="wav">WAV · full quality</button>
+      <button data-format="m4a">M4A · small</button>
+    </div>
+    <div id="sheetMessage" class="sheet-message">
+      <p id="sheetText"></p>
+      <div id="sheetBar" class="progress" hidden><div></div></div>
+    </div>
+    <button id="shareButton" class="primary wide">Share…</button>
+    <button id="saveButton" class="outlined wide">Save…</button>
+  </section>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
