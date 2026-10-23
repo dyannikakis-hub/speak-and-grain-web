@@ -46,6 +46,17 @@
       </div>
     </header>
 
+    <!-- Record (record a take, then play it) or Live (play what's coming in), and Settings. -->
+    <div class="mode-row">
+      <div id="modeSwitch" class="mode-switch">
+        <button data-mode="record">Record</button>
+        <button data-mode="live">Live</button>
+      </div>
+      <button id="gear" class="icon-button gear" aria-label="Settings">
+        <svg viewBox="0 0 24 24"><path class="teeth" d="M12 2.2v2.6M12 19.2v2.6M2.2 12h2.6M19.2 12h2.6M5.1 5.1l1.8 1.8M17.1 17.1l1.8 1.8M5.1 18.9l1.8-1.8M17.1 6.9l1.8-1.8"/><circle cx="12" cy="12" r="6.4"/><circle cx="12" cy="12" r="2.3"/></svg>
+      </button>
+    </div>
+
     <section class="pad">
       <canvas id="padCanvas"></canvas>
       <div class="chips">
@@ -59,6 +70,8 @@
       <div id="yTop" class="ylabel top"></div>
       <div id="yBottom" class="ylabel bottom"></div>
       <div id="padHint" class="pad-hint">Your recording will appear here</div>
+      <div id="liveOld" class="live-label old" hidden>6 s ago</div>
+      <div id="liveNow" class="live-label now" hidden>now</div>
     </section>
 
     <section id="range" class="range">
@@ -66,15 +79,45 @@
       <div class="range-labels"><span id="rangeStart"></span><span class="muted">drag to choose what plays</span><span id="rangeEnd"></span></div>
     </section>
 
-    <div id="direction" class="segmented">
-      <button data-direction="Forward"><svg viewBox="0 0 16 12" class="icon"><path d="M1 6h14M15 6l-4-3.2M15 6l-4 3.2"/></svg>Forward</button>
-      <button data-direction="Mixed"><svg viewBox="0 0 16 12" class="icon"><path d="M1 2.4h14M15 2.4l-4-3.2M15 2.4l-4 3.2M15 9.6H1M1 9.6l4-3.2M1 9.6l4 3.2"/></svg>Mixed</button>
-      <button data-direction="Backward"><svg viewBox="0 0 16 12" class="icon"><path d="M15 6H1M1 6l4-3.2M1 6l4 3.2"/></svg>Backward</button>
-    </div>
+    <!-- Controls, on three pages of the same height so the pad never jumps. -->
+    <section class="controls">
+      <div id="tabs" class="tabs">
+        <button data-tab="grains">Grains</button>
+        <button data-tab="fx">FX</button>
+        <button data-tab="mod">Mod</button>
+      </div>
+      <div class="page" data-page="grains">
+        <div class="direction-row">
+        <div id="direction" class="segmented">
+          <button data-direction="Forward"><svg viewBox="0 0 16 12" class="icon"><path d="M1 6h14M15 6l-4-3.2M15 6l-4 3.2"/></svg>Forward</button>
+          <button data-direction="Mixed"><svg viewBox="0 0 16 12" class="icon"><path d="M1 2.4h14M15 2.4l-4-3.2M15 2.4l-4 3.2M15 9.6H1M1 9.6l4-3.2M1 9.6l4 3.2"/></svg>Mixed</button>
+          <button data-direction="Backward"><svg viewBox="0 0 16 12" class="icon"><path d="M15 6H1M1 6l4-3.2M1 6l4 3.2"/></svg>Backward</button>
+        </div>
+        <div id="liveRecSlot" class="live-rec"></div>
+        </div>
+        <div id="grainSliders" class="sliders"></div>
+      </div>
+      <div class="page" data-page="fx" hidden>
+        <div id="fxSliders" class="sliders"></div>
+        <div class="sliders">
+          <div id="fxMixSlot"></div>
+          <div id="grainMixSlot"></div>
+          <div id="liveGainSlot"></div>
+        </div>
+      </div>
+      <div class="page" data-page="mod" hidden>
+        <div id="modTargets" class="mod-targets"></div>
+        <div class="mod-row">
+          <div id="modSliders" class="sliders two"></div>
+          <button id="shapeChip" class="shape-chip" aria-label="LFO shape: tap to change">
+            <span id="shapeLabel"></span>
+            <span class="lfo"><span id="lfoDot" class="lfo-dot"></span></span>
+          </button>
+        </div>
+      </div>
+    </section>
 
-    <div id="sliders" class="sliders"></div>
-
-    <div class="bottom">
+    <div id="buttons" class="bottom">
       <button id="auto" class="tonal" disabled><svg viewBox="0 0 12 12" class="icon-fill" id="autoIcon"></svg>Auto</button>
       <button id="speak" class="speak" disabled>Hold to<br>Speak</button>
       <div class="rec-row">
@@ -111,6 +154,25 @@
     </div>
     <button id="shareButton" class="primary wide">Share…</button>
     <button id="saveButton" class="outlined wide">Save…</button>
+  </section>
+
+  <!-- Settings: how the app listens. -->
+  <div id="settingsBackdrop" class="backdrop" hidden></div>
+  <section id="settings" class="sheet" hidden>
+    <div class="handle"></div>
+    <h2>Settings</h2>
+    <div class="setting-title">Input level</div>
+    <div class="meter"><div id="meterFill"></div></div>
+    <label class="toggle-row">
+      <span><span class="setting-name">Auto gain</span>
+        <span class="setting-note">Brings every take up to full level. In Live mode it rides the level as you play.</span></span>
+      <input id="autoGain" type="checkbox" class="switch">
+    </label>
+    <div id="gainSlot"></div>
+    <div class="setting-title">Listen to</div>
+    <div id="inputList" class="input-list"></div>
+    <p class="setting-note">On a computer, pick your audio interface to play a guitar, synth or mixer through Live mode.
+      Use headphones in Live mode: through speakers it will feed back.</p>
   </section>
 
   <script type="module" src="app.js"></script>
